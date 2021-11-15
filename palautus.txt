@@ -24,4 +24,5 @@ Palvelin->Selain: data.json
 
 0.6
 
-https://www.websequencediagrams.com/
+Selain->Palvelin: HTTP POST ({content: "asd", date: "15.11.2021"})
+
