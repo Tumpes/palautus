@@ -1,3 +1,5 @@
+0.1 - 0.3 luettu.
+
 0.4
 
 Selain->Palvelin: HTTP POST ({content: "asd", date: "15.11.2021"})
