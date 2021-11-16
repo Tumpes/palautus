@@ -51,22 +51,19 @@ const Content = (props) => {
 const Part = (props) => {
   return (
     <>
-      {" "}
       <p>
-        {" "}
-        {props.part1} {props.exercises1}{" "}
-      </p>{" "}
+        {props.part1} {props.exercises1}
+      </p>
       <p>
-        {" "}
-        {props.part2} {props.exercises2}{" "}
-      </p>{" "}
+        {props.part2} {props.exercises2}
+      </p>
       <p>
-        {" "}
-        {props.part3} {props.exercises3}{" "}
-      </p>{" "}
+        {props.part3} {props.exercises3}
+      </p>
     </>
   );
 };
+
 
 const Total = (props) => {
   return (
