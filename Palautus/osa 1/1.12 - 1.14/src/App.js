@@ -14,6 +14,7 @@ const App = () => {
     const voittaja = anecdotes[taulukko.indexOf(Math.max(...taulukko))];
     return voittaja;
   };
+  
 
   const anecdotes = [
     "If it hurts, do it more often.",
@@ -26,7 +27,7 @@ const App = () => {
   ];
 
   const [selected, setSelected] = useState(0);
-
+  
   return (
     <div>
       <h1> Anecdote </h1>
