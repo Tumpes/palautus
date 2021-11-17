@@ -5,14 +5,8 @@ const App = () => {
 
   const increment = () => {
     const copy = [...taulukko];
-    copy[selected] += 1;
-    setTaulukko(copy);
-  };
-
-  const voittaja = () => {
-    if (Math.max(...taulukko) === 0) return "ei ääniä";
-    const voittaja = anecdotes[taulukko.indexOf(Math.max(...taulukko))];
-    return voittaja;
+    copy[selected] += 1
+    setTaulukko(copy)
   };
 
   const anecdotes = [
@@ -29,7 +23,6 @@ const App = () => {
 
   return (
     <div>
-      <h1> Anecdote </h1>
       {anecdotes[selected]}
       <p> has {taulukko[selected]} votes </p>
       <p>
@@ -38,8 +31,6 @@ const App = () => {
           next anecdote
         </button>
       </p>
-      <h1> Anecdote with most votes</h1>
-      <p> {voittaja()} </p>
     </div>
   );
 };
