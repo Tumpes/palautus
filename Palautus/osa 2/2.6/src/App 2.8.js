@@ -6,18 +6,6 @@ const App = () => {
   ]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
-  const [filteredNames, setFilteredNames] = useState(persons);
-
-  const handleFilterChange = (event) => {
-    const filter = event.target.value;
-    console.log(filter);
-    if (filter === null || filter === "") {
-      setFilteredNames(persons);
-    } else {
-      setFilteredNames(persons.filter((e) => e.name.includes(filter)));
-      console.log(filteredNames);
-    }
-  };
 
   const handleNameChange = (event) => {
     console.log(event.target.value);
@@ -47,7 +35,6 @@ const App = () => {
       };
       console.log(persons.concat(tiedot));
       setPersons(persons.concat(tiedot));
-      setFilteredNames(filteredNames.concat(tiedot))
       setNewName("");
       setNewNumber("");
     }
@@ -56,8 +43,6 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      Filter: <input onChange={handleFilterChange} />
-      <h1> add new person </h1>
       <form onSubmit={addName}>
         <div>
           Name: <input value={newName} onChange={handleNameChange} />
@@ -70,7 +55,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <ul>
-        {filteredNames.map((name) => (
+        {persons.map((name) => (
           <Nimi name={name} key={name.name} />
         ))}
       </ul>
