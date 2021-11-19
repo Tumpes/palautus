@@ -1,52 +1,12 @@
 import React, { useState } from "react";
 
-const Filter = (props) => {
-  return (
-    <p>
-      {" "}
-      Filter: <input onChange={props.handleFilterChange} />{" "}
-    </p>
-  );
-};
-
-const PersonForm = ({
-  addName,
-  newName,
-  handleNameChange,
-  newNumber,
-  handleNumberChange,
-}) => {
-  return (
-    <form onSubmit={addName}>
-      <div>
-        Name: <input value={newName} onChange={handleNameChange} />
-      </div>
-      <div>
-        Number:
-        <input value={newNumber} onChange={handleNumberChange} />
-      </div>
-      <button type="submit">save</button>
-    </form>
-  );
-};
-
-const Persons = (props) => {
-  return(
-  <ul>
-  {props.filteredNames.map((name) => (
-    <props.Nimi name={name} key={name.name} />
-  ))}
-</ul>
-  )
-}
-
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-123456" },
-    { name: "Ada Lovelace", number: "39-44-5323523" },
-    { name: "Dan Abramov", number: "12-43-234345" },
-    { name: "Mary Poppendieck", number: "39-23-6423122" },
-  ]);
+    { name: 'Arto Hellas', number: '040-123456' },
+    { name: 'Ada Lovelace', number: '39-44-5323523' },
+    { name: 'Dan Abramov', number: '12-43-234345' },
+    { name: 'Mary Poppendieck', number: '39-23-6423122' }
+  ])
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filteredNames, setFilteredNames] = useState(persons);
@@ -57,9 +17,7 @@ const App = () => {
     if (filter === null || filter === "") {
       setFilteredNames(persons);
     } else {
-      setFilteredNames(
-        persons.filter((e) => e.name.toLowerCase().includes(filter))
-      );
+      setFilteredNames(persons.filter((e) => e.name.toLowerCase().includes(filter)));
       console.log(filteredNames);
     }
   };
@@ -92,7 +50,7 @@ const App = () => {
       };
       console.log(persons.concat(tiedot));
       setPersons(persons.concat(tiedot));
-      setFilteredNames(filteredNames.concat(tiedot));
+      setFilteredNames(filteredNames.concat(tiedot))
       setNewName("");
       setNewNumber("");
     }
@@ -101,17 +59,24 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter handleFilterChange={handleFilterChange} />
+      Filter: <input onChange={handleFilterChange} />
       <h1> add new person </h1>
-      <PersonForm
-        addName={addName}
-        newName={newName}
-        handleNameChange={handleNameChange}
-        newNumber={newNumber}
-        handleNumberChange={handleNumberChange}
-      />
+      <form onSubmit={addName}>
+        <div>
+          Name: <input value={newName} onChange={handleNameChange} />
+        </div>
+        <div>
+          Number:
+          <input value={newNumber} onChange={handleNumberChange} />
+        </div>
+        <button type="submit">save</button>
+      </form>
       <h2>Numbers</h2>
-      <Persons filteredNames={filteredNames} Nimi={Nimi}/>
+      <ul>
+        {filteredNames.map((name) => (
+          <Nimi name={name} key={name.name} />
+        ))}
+      </ul>
     </div>
   );
 };
