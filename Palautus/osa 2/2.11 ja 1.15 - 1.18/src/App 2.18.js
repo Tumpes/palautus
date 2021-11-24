@@ -1,12 +1,30 @@
+import react from "react";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import axios from "axios";
+import nameService from "./services/persons";
 
 const Filter = (props) => {
   return (
     <p>
       Filter: <input onChange={props.handleFilterChange} />
     </p>
+  );
+};
+
+const Nimi = (props) => {
+  //  console.log(props.id);
+
+   const deleteHandler = (id) => {
+     if(window.confirm(`delete ${props.name.name}?`))
+    nameService.remove(id + 1).then((response) => console.log(response ))
+
+   }
+
+  return (
+    <li>
+      {props.name.name + " " + props.name.number}
+      <button onClick={() => deleteHandler(props.id) }> delete </button>
+    </li>
   );
 };
 
@@ -35,8 +53,8 @@ const Persons = (props) => {
   if (props.filteredNames === undefined) return null;
   return (
     <ul>
-      {props.filteredNames.map((name) => (
-        <props.Nimi name={name} key={name.name} />
+      {props.filteredNames.map((name, id) => (
+        <props.Nimi name={name} key={name.name} id={id} />
       ))}
     </ul>
   );
@@ -49,8 +67,7 @@ const App = () => {
   const [filteredNames, setFilteredNames] = useState(persons);
 
   useEffect(() => {
-    console.log(axios.get("http://localhost:3001/persons"));
-    axios.get("http://localhost:3001/persons").then((response) => {
+    nameService.getAll().then((response) => {
       setFilteredNames(response.data);
       setPersons(response.data);
     });
@@ -79,15 +96,15 @@ const App = () => {
     setNewNumber(event.target.value);
   };
 
-  const Nimi = (person) => {
-    console.log(person);
-    return <li> {person.name.name + " " + person.name.number} </li>;
-  };
-
   const addName = (event) => {
     event.preventDefault();
     if (persons.filter((e) => e.name === newName).length !== 0) {
-      alert(`${newName} is already added to phonebook.`);
+      window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`); 
+      console.log(persons)
+      const newPerson = {...persons[Object.keys(persons).find(e => persons[e].name === newName)]}
+      console.log(newPerson.id);
+      const personObject = { ...newPerson, number: newNumber}
+      nameService.update(newPerson.id, personObject) // tämäkään ei päivity
     } else {
       const tiedot = {
         name: newName,
@@ -95,11 +112,13 @@ const App = () => {
         key: newName,
         id: persons.length + 1,
       };
+
       console.log(persons.concat(tiedot));
-      setPersons(persons.concat(tiedot));
-      setFilteredNames(filteredNames.concat(tiedot));
-      setNewName("");
-      setNewNumber("");
+      nameService.create(tiedot).then((response) => {
+        setPersons(persons.concat(response.data));
+        setFilteredNames(filteredNames.concat(response.data));
+        setNewName("");
+      });
     }
   };
 
