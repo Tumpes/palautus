@@ -2,6 +2,7 @@ import react from "react";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import nameService from "./services/persons";
+import Notification from "./services/notification";
 
 const Filter = (props) => {
   return (
@@ -14,16 +15,20 @@ const Filter = (props) => {
 const Nimi = (props) => {
   //  console.log(props.id);
 
-   const deleteHandler = (id) => {
-     if(window.confirm(`delete ${props.name.name}?`))
-    nameService.remove(id + 1).then((response) => console.log(response ))
-
-   }
+  const deleteHandler = (id) => {
+    if (window.confirm(`delete ${props.name.name}?`))
+      nameService.remove(id + 1).then((response) => console.log(response));
+    props.setNotification(`henkilö ${props.name.name} poistettu.`);
+    props.setNotificationType("success");
+    setTimeout(() => {
+      props.setNotification(null);
+    }, 5000);
+  };
 
   return (
     <li>
       {props.name.name + " " + props.name.number}
-      <button onClick={() => deleteHandler(props.id) }> delete </button>
+      <button onClick={() => deleteHandler(props.id)}> delete </button>
     </li>
   );
 };
@@ -54,7 +59,13 @@ const Persons = (props) => {
   return (
     <ul>
       {props.filteredNames.map((name, id) => (
-        <props.Nimi name={name} key={name.name} id={id} />
+        <props.Nimi
+          name={name}
+          key={name.name}
+          id={id}
+          setNotification={props.setNotification}
+          setNotificationType={props.setNotificationType}
+        />
       ))}
     </ul>
   );
@@ -65,6 +76,8 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filteredNames, setFilteredNames] = useState(persons);
+  const [notification, setNotification] = useState(null);
+  const [notificationType, setNotificationType] = useState("");
 
   useEffect(() => {
     nameService.getAll().then((response) => {
@@ -99,12 +112,39 @@ const App = () => {
   const addName = (event) => {
     event.preventDefault();
     if (persons.filter((e) => e.name === newName).length !== 0) {
-      window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`);
-      console.log(persons)
-      const newPerson = {...persons[Object.keys(persons).find(e => persons[e].name === newName)]}
+      window.confirm(
+        `${newName} is already added to phonebook, replace the old number with a new one?`
+      );
+      console.log(persons);
+      const newPerson = {
+        ...persons[
+          Object.keys(persons).find((e) => persons[e].name === newName)
+        ],
+      };
       console.log(newPerson.id);
-      const personObject = { ...newPerson, number: newNumber}
-      nameService.update(newPerson.id, personObject) // tämäkään ei päivity
+      const personObject = { ...newPerson, number: newNumber };
+      nameService
+        .update(newPerson.id, personObject)
+        .then((response) => {
+          console.log(response.data.number);
+          setNewNumber(response.data.number);
+          setNotification(
+            `henkilön ${newName} numero vaihdettu numeroon ${newNumber}`
+          );
+          setNotificationType("success"); // tämäkään ei päivity
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
+        })
+        .catch((error) => {
+          setNotification(
+            `${newPerson.name} has been removed from the server.`
+          );
+          setNotificationType("error");
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
+        });
     } else {
       const tiedot = {
         name: newName,
@@ -118,6 +158,11 @@ const App = () => {
         setPersons(persons.concat(response.data));
         setFilteredNames(filteredNames.concat(response.data));
         setNewName("");
+        setNotification(`henkilö ${newName} lisätty.`);
+        setNotificationType("success");
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
       });
     }
   };
@@ -125,6 +170,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification} type={notificationType} />
       <Filter handleFilterChange={handleFilterChange} />
       <h1> add new person </h1>
       <PersonForm
@@ -135,7 +181,12 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons filteredNames={filteredNames} Nimi={Nimi} />
+      <Persons
+        filteredNames={filteredNames}
+        Nimi={Nimi}
+        setNotification={setNotification}
+        setNotificationType={setNotificationType}
+      />
     </div>
   );
 };
