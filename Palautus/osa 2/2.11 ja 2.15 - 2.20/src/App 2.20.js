@@ -112,9 +112,9 @@ const App = () => {
   const addName = (event) => {
     event.preventDefault();
     if (persons.filter((e) => e.name === newName).length !== 0) {
-      if(window.confirm(
+      window.confirm(
         `${newName} is already added to phonebook, replace the old number with a new one?`
-      )){
+      );
       console.log(persons);
       const newPerson = {
         ...persons[
@@ -145,13 +145,14 @@ const App = () => {
             setNotification(null);
           }, 5000);
         });
-    }} else {
+    } else {
       const tiedot = {
         name: newName,
         number: newNumber,
         key: newName,
         id: persons.length + 1,
       };
+
       console.log(persons.concat(tiedot));
       nameService.create(tiedot).then((response) => {
         setPersons(persons.concat(response.data));
@@ -161,7 +162,7 @@ const App = () => {
         setNotificationType("success");
         setTimeout(() => {
           setNotification(null);
-      }, 5000);
+        }, 5000);
       });
     }
   };
@@ -188,6 +189,6 @@ const App = () => {
       />
     </div>
   );
-} ;
+};
 
 export default App;
