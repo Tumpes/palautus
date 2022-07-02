@@ -9,7 +9,7 @@ const password = process.argv[2];
 const name = process.argv[3];
 const number = process.argv[4];
 
-const url = `mongodb+srv://Tumpes:${password}@cluster0.dxkr9.mongodb.net/Entry?retryWrites=true&w=majority`;
+const url = `mongodb+srv://Tumpes:${password}@cluster0.dxkr9.mongodb.net/Person?retryWrites=true&w=majority`;
 mongoose.connect(url);
 
 const schema = new mongoose.Schema({
@@ -18,23 +18,23 @@ const schema = new mongoose.Schema({
   date: Date,
 });
 
-const Entry = mongoose.model("Entry", schema);
+const Person = mongoose.model("Person", schema);
 
 if (process.argv.length === 3) {
-  Entry.find({}).then((result) => {
-    result.forEach((entry) => {
-      console.log(entry);
+  Person.find({}).then((result) => {
+    result.forEach((person) => {
+      console.log(person);
     });
     mongoose.connection.close();
   });
 } else {
-  const entry = new Entry({
+  const person = new Person({
     name: name,
     number: number,
     date: new Date(),
   });
 
-  entry.save().then(() => {
+  person.save().then(() => {
     console.log(`added ${name} number ${number} to phonebook`);
     mongoose.connection.close();
   });

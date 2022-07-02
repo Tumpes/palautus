@@ -13,16 +13,19 @@ const Filter = (props) => {
 };
 
 const Nimi = (props) => {
-  //  console.log(props.id);
-
+  console.log(props);
   const deleteHandler = (id) => {
-    if (window.confirm(`delete ${props.name.name}?`))
-      nameService.remove(id + 1).then((response) => console.log(response));
-    props.setNotification(`henkilö ${props.name.name} poistettu.`);
-    props.setNotificationType("success");
-    setTimeout(() => {
-      props.setNotification(null);
-    }, 5000);
+    console.log(props);
+    if (window.confirm(`delete ${props.name.name}?`)) {
+      nameService
+        .remove(props.name.id)
+        .then((response) => console.log(response));
+      props.setNotification(`henkilö ${props.name.name} poistettu.`);
+      props.setNotificationType("success");
+      setTimeout(() => {
+        props.setNotification(null);
+      }, 5000);
+    }
   };
 
   return (
@@ -80,6 +83,7 @@ const App = () => {
   const [notificationType, setNotificationType] = useState("");
 
   useEffect(() => {
+    console.log(nameService.getAll());
     nameService.getAll().then((response) => {
       setFilteredNames(response.data);
       setPersons(response.data);
@@ -112,40 +116,43 @@ const App = () => {
   const addName = (event) => {
     event.preventDefault();
     if (persons.filter((e) => e.name === newName).length !== 0) {
-      if(window.confirm(
-        `${newName} is already added to phonebook, replace the old number with a new one?`
-      )){
-      console.log(persons);
-      const newPerson = {
-        ...persons[
-          Object.keys(persons).find((e) => persons[e].name === newName)
-        ],
-      };
-      console.log(newPerson.id);
-      const personObject = { ...newPerson, number: newNumber };
-      nameService
-        .update(newPerson.id, personObject)
-        .then((response) => {
-          console.log(response.data.number);
-          setNewNumber(response.data.number);
-          setNotification(
-            `henkilön ${newName} numero vaihdettu numeroon ${newNumber}`
-          );
-          setNotificationType("success"); // tämäkään ei päivity
-          setTimeout(() => {
-            setNotification(null);
-          }, 5000);
-        })
-        .catch((error) => {
-          setNotification(
-            `${newPerson.name} has been removed from the server.`
-          );
-          setNotificationType("error");
-          setTimeout(() => {
-            setNotification(null);
-          }, 5000);
-        });
-    }} else {
+      if (
+        window.confirm(
+          `${newName} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        console.log(persons);
+        const newPerson = {
+          ...persons[
+            Object.keys(persons).find((e) => persons[e].name === newName)
+          ],
+        };
+        console.log(newPerson.id);
+        const personObject = { ...newPerson, number: newNumber };
+        nameService
+          .update(newPerson.id, personObject)
+          .then((response) => {
+            console.log(response.data.number);
+            setNewNumber(response.data.number);
+            setNotification(
+              `henkilön ${newName} numero vaihdettu numeroon ${newNumber}`
+            );
+            setNotificationType("success"); // tämäkään ei päivity
+            setTimeout(() => {
+              setNotification(null);
+            }, 5000);
+          })
+          .catch((error) => {
+            setNotification(
+              `${newPerson.name} has been removed from the server.`
+            );
+            setNotificationType("error");
+            setTimeout(() => {
+              setNotification(null);
+            }, 5000);
+          });
+      }
+    } else {
       const tiedot = {
         name: newName,
         number: newNumber,
@@ -161,7 +168,7 @@ const App = () => {
         setNotificationType("success");
         setTimeout(() => {
           setNotification(null);
-      }, 5000);
+        }, 5000);
       });
     }
   };
@@ -182,12 +189,13 @@ const App = () => {
       <h2>Numbers</h2>
       <Persons
         filteredNames={filteredNames}
+        setFilteredNames={setFilteredNames}
         Nimi={Nimi}
         setNotification={setNotification}
         setNotificationType={setNotificationType}
       />
     </div>
   );
-} ;
+};
 
 export default App;
