@@ -13,9 +13,7 @@ const Filter = (props) => {
 };
 
 const Nimi = (props) => {
-  console.log(props);
   const deleteHandler = (id) => {
-    console.log(props);
     if (window.confirm(`delete ${props.name.name}?`)) {
       nameService
         .remove(props.name.id)
@@ -91,7 +89,7 @@ const App = () => {
   }, []);
 
   const handleFilterChange = (event) => {
-    const filter = event.target.value;
+    const filter = event.target.value.toLowerCase();
     console.log(filter);
     if (filter === null || filter === "") {
       setFilteredNames(persons);
@@ -160,16 +158,25 @@ const App = () => {
         id: persons.length + 1,
       };
       console.log(persons.concat(tiedot));
-      nameService.create(tiedot).then((response) => {
-        setPersons(persons.concat(response.data));
-        setFilteredNames(filteredNames.concat(response.data));
-        setNewName("");
-        setNotification(`henkilö ${newName} lisätty.`);
-        setNotificationType("success");
-        setTimeout(() => {
-          setNotification(null);
-        }, 5000);
-      });
+      nameService
+        .create(tiedot)
+        .then((response) => {
+          setPersons(persons.concat(response.data));
+          setFilteredNames(filteredNames.concat(response.data));
+          setNewName("");
+          setNotification(`henkilö ${newName} lisätty.`);
+          setNotificationType("success");
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
+        })
+        .catch((error) => {
+          setNotificationType("error");
+          setNotification(error.response.data.error);
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
+        });
     }
   };
 
